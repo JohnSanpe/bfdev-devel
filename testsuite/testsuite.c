@@ -26,7 +26,7 @@ options[] = {
     {"version", no_argument, 0, 'v'},
     {"help", no_argument, 0, 'h'},
     {"count", required_argument, 0, 'c'},
-    {"slient", required_argument, 0, 's'},
+    {"quiet", no_argument, 0, 'q'},
     { }, /* NULL */
 };
 
@@ -136,7 +136,7 @@ trigger_testsuite(struct testsuite *test, unsigned int loops,
             0;
         );
 
-        bfdev_log_notice("Tested (%d) %s\n", retval,
+        bfdev_log_notice("Tested %d/%d (%d) %s\n", count, loops, retval,
                          retval ? MESSAGE_FAIL : MESSAGE_PASS);
         if (bfdev_unlikely(retval)) {
             ename = bfdev_errname(retval, &einfo);
@@ -185,8 +185,8 @@ usage(void)
     bfdev_log_err("\n");
 
     bfdev_log_err("Mandatory arguments to long options are mandatory for short options too.\n");
-    bfdev_log_err("  -c, --count=NUM    number of repetitions for each test\n");
-    bfdev_log_err("  -s, --slient       do not print debugging information\n");
+    bfdev_log_err("  -c, --count=NUM    number of repetitions for each test (default: %d)\n", DEFAULT_LOOPS);
+    bfdev_log_err("  -q, --quiet        never print debug level infomations\n");
     bfdev_log_err("\n");
 
     align = 0;
@@ -219,7 +219,7 @@ main(int argc, char *const argv[])
     loops = DEFAULT_LOOPS;
 
     for (;;) {
-        arg = getopt_long(argc, argv, "c:svh", options, &optidx);
+        arg = getopt_long(argc, argv, "c:qvh", options, &optidx);
         if (arg == -1)
             break;
 
@@ -232,7 +232,7 @@ main(int argc, char *const argv[])
                 }
                 break;
 
-            case 's':
+            case 'q':
                 bfdev_log_default.record_level = BFDEV_LEVEL_INFO;
                 break;
 
