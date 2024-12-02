@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 /*
- * Copyright(c) 2021 John Sanpe <sanpeqf@gmail.com>
+ * Copyright(c) 2021 Jalen Wong <sanpeqf@gmail.com>
  */
 
 #include <base.h>
