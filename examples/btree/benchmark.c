@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <bfdev/log.h>
-#include <bfdev/btree.h>
+#include <bfx/btree.h>
 #include "../time.h"
 
 #define BTREE_DEBUG 0
@@ -34,9 +34,9 @@ node_dump(struct bench_node *node)
 
 static const bfdev_btree_ops_t
 bench_ops = {
-    .alloc = bfdev_btree_alloc,
-    .free = bfdev_btree_free,
-    .find = bfdev_btree_key_find,
+    .alloc = bfx_btree_alloc,
+    .free = bfx_btree_free,
+    .find = bfx_btree_key_find,
 };
 
 int
@@ -48,7 +48,7 @@ main(int argc, const char *argv[])
     void *block;
 
     BFDEV_BTREE_ROOT(
-        bench_root, &bfdev_btree_layoutptr,
+        bench_root, &bfx_btree_layoutptr,
         &bench_ops, NULL
     );
 

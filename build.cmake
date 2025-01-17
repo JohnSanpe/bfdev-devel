@@ -72,6 +72,10 @@ include_directories(${BFDEV_INCLUDE_DIRS})
 include(${BFDEV_ARCH_PATH}/build.cmake)
 include(${BFDEV_SOURCE_PATH}/build.cmake)
 
+if(BFDEV_BFX)
+    include(${BFDEV_UTILS_PATH}/build.cmake)
+endif()
+
 set(BFDEV_LIBRARY_HEADER
     ${BFDEV_HEADER}
     ${BFDEV_ASM_HEADER}

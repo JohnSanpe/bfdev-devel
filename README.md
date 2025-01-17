@@ -51,6 +51,8 @@ View supported components: [Docs](docs/components.md)
 |  include  |       include path       |
 |  scripts  |      build scripts       |
 |    src    |      core code path      |
+| testsuite |   unit tests and so on   |
+|   utils   | API extension functions  |
 
 ## Reference Path
 
@@ -62,6 +64,7 @@ graph LR
     arch/asm-generated{exist}
 
     subgraph target[User Installation]
+        include/bfx[bfx]
         include/bfdev[bfdev]
         include/bfdev/asm-generic[bfdev:asm-generic]
         arch/bfdev/asm[bfdev:asm]
@@ -73,10 +76,12 @@ graph LR
     arch/asm -.-> include/asm-generic
     arch/asm-generated --N--> include/asm-generic
     include/bfdev --> arch/bfdev/asm-generated
+    include/bfx --> include/bfdev
     arch/bfdev/asm-generated --Y--> arch/bfdev/asm
     arch/bfdev/asm-generated --N--> include/bfdev/asm-generic
     arch/bfdev/asm -.-> include/bfdev/asm-generic
     include --> include/bfdev
+    include --> include/bfx
     arch/asm --> arch/bfdev/asm
     include/asm-generic --> arch/bfdev/asm
 ```

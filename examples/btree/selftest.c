@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#include <bfdev/btree.h>
+#include <bfx/btree.h>
 #include <bfdev/list.h>
 
 #define TEST_LOOP 100
@@ -54,9 +54,9 @@ test_strfind(bfdev_btree_root_t *root, uintptr_t *node, uintptr_t *key)
 
 static const bfdev_btree_ops_t
 test_value_ops = {
-    .alloc = bfdev_btree_alloc,
-    .free = bfdev_btree_free,
-    .find = bfdev_btree_key_find,
+    .alloc = bfx_btree_alloc,
+    .free = bfx_btree_free,
+    .find = bfx_btree_key_find,
     .clash = test_clash,
     .remove = test_remove,
 
@@ -64,8 +64,8 @@ test_value_ops = {
 
 static const bfdev_btree_ops_t
 test_string_ops = {
-    .alloc = bfdev_btree_alloc,
-    .free = bfdev_btree_free,
+    .alloc = bfx_btree_alloc,
+    .free = bfx_btree_free,
     .find = test_strfind,
     .clash = test_clash,
     .remove = test_remove,
@@ -81,7 +81,7 @@ test_testing(struct test_node *nodes)
     int retval;
 
     BFDEV_BTREE_ROOT(
-        root32, &bfdev_btree_layout32,
+        root32, &bfx_btree_layout32,
         &test_value_ops, NULL
     );
 
@@ -127,7 +127,7 @@ test_testing(struct test_node *nodes)
     bfdev_btree_release(&root32, NULL, NULL);
 
     BFDEV_BTREE_ROOT(
-        rootstr, &bfdev_btree_layout32,
+        rootstr, &bfx_btree_layout32,
         &test_string_ops, NULL
     );
 
