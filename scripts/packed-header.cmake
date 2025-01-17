@@ -3,7 +3,7 @@
 # Copyright(c) 2023 John Sanpe <sanpeqf@gmail.com>
 #
 
-function(packed_header prefix name genfile source)
+function(packed_header prefix name header genfile source)
     file(GLOB srclist ${source}/*.h)
 
     file(REMOVE ${genfile})
@@ -18,6 +18,7 @@ function(packed_header prefix name genfile source)
         "\n"
     )
 
+    file(APPEND ${genfile} ${header} "\n")
     foreach(srcpath ${srclist})
         string(REGEX REPLACE ".+/(.+)" "\\1" filename ${srcpath})
         message(STATUS "Packing header: " ${prefix} ${filename})

@@ -23,6 +23,7 @@ set(BFDEV_ARCH generic)
 set(BFDEV_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 set(BFDEV_HEADER_PATH ${PROJECT_SOURCE_DIR}/include)
 set(BFDEV_SOURCE_PATH ${PROJECT_SOURCE_DIR}/src)
+set(BFDEV_UTILS_PATH ${PROJECT_SOURCE_DIR}/utils)
 set(BFDEV_DOCUMENT_PATH ${PROJECT_SOURCE_DIR}/docs)
 set(BFDEV_GENERATED_PATH ${PROJECT_BINARY_DIR}/generated)
 
@@ -48,8 +49,11 @@ string(APPEND BFDEV_RELEASE
 
 option(BFDEV_DEVEL "Enable development mode" OFF)
 option(BFDEV_STRICT "Enable strict compilation" OFF)
-option(BFDEV_EXAMPLES "Build examples" OFF)
-option(BFDEV_TESTSUITE "Build testsuite" OFF)
+
+option(BFDEV_BFX "Build Extension Layer" ON)
+option(BFDEV_EXAMPLES "Build Examples" OFF)
+option(BFDEV_TESTSUITE "Build Testsuite" OFF)
+option(BFDEV_DOCS "Install Documentation" OFF)
 
 option(BFDEV_ASAN "Enable Address Sanitizer" OFF)
 option(BFDEV_UBSAN "Enable Undefined Behaviour Sanitizer" OFF)
@@ -67,11 +71,17 @@ option(BFDEV_CRC_EXTEND "CRC loop unfolding optimize" ON)
 
 if(BFDEV_DEVEL)
     set(BFDEV_STRICT ON)
+    set(BFDEV_BFX ON)
     set(BFDEV_EXAMPLES ON)
     set(BFDEV_TESTSUITE ON)
+    set(BFDEV_DOCS ON)
     set(BFDEV_ASAN ON)
     set(BFDEV_UBSAN ON)
     set(BFDEV_GCOV ON)
+endif()
+
+if(BFDEV_EXAMPLES OR BFDEV_TESTSUITE)
+    set(BFDEV_BFX ON)
 endif()
 
 include(${PROJECT_SOURCE_DIR}/build.cmake)
@@ -79,10 +89,19 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/scripts)
 
 packed_header(
     bfdev/
-    _BFDEV_H_
+    _BFDEV_H_ ""
     ${BFDEV_GENERATED_PATH}/bfdev.h
     ${BFDEV_HEADER_PATH}/bfdev
 )
+
+if(BFDEV_BFX)
+    packed_header(
+        bfx/
+        _BFX_H_ "#include <bfdev.h>"
+        ${BFDEV_GENERATED_PATH}/bfx.h
+        ${BFDEV_HEADER_PATH}/bfx
+    )
+endif()
 
 macro(bfdev_dependencies target)
     add_dependencies(
@@ -134,21 +153,13 @@ if(${CMAKE_PROJECT_NAME} STREQUAL "bfdev")
     )
 
     install(FILES
-        ${BFDEV_GENERATED_PATH}/bfdev.h
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    )
-
-    install(FILES
-        ${PROJECT_SOURCE_DIR}/README.md
-        ${PROJECT_SOURCE_DIR}/AUTHORS
-        ${PROJECT_SOURCE_DIR}/COPYING
-        ${PROJECT_SOURCE_DIR}/COPYING.LIB
-        DESTINATION ${CMAKE_INSTALL_DOCDIR}
-    )
-
-    install(FILES
         ${BFDEV_CONFIGURE}
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/bfdev
+    )
+
+    install(FILES
+        ${BFDEV_GENERATED_PATH}/bfdev.h
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     )
 
     install(DIRECTORY
@@ -158,10 +169,32 @@ if(${CMAKE_PROJECT_NAME} STREQUAL "bfdev")
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     )
 
-    install(DIRECTORY
-        ${BFDEV_DOCUMENT_PATH}
-        DESTINATION ${CMAKE_INSTALL_DOCDIR}
-    )
+    if(BFDEV_BFX)
+        install(FILES
+            ${BFDEV_GENERATED_PATH}/bfx.h
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        )
+
+        install(DIRECTORY
+            ${BFDEV_HEADER_PATH}/bfx
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        )
+    endif()
+
+    if(BFDEV_DOCS)
+        install(FILES
+            ${PROJECT_SOURCE_DIR}/README.md
+            ${PROJECT_SOURCE_DIR}/AUTHORS
+            ${PROJECT_SOURCE_DIR}/COPYING
+            ${PROJECT_SOURCE_DIR}/COPYING.LIB
+            DESTINATION ${CMAKE_INSTALL_DOCDIR}
+        )
+
+        install(DIRECTORY
+            ${BFDEV_DOCUMENT_PATH}
+            DESTINATION ${CMAKE_INSTALL_DOCDIR}
+        )
+    endif()
 
     install(TARGETS
         bfdev_static bfdev_shared
